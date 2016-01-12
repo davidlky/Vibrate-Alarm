@@ -1,6 +1,8 @@
 package com.sevenhourdev.vibratealarm;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,17 +42,18 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this,AddAlarm.class);
+                startActivity(intent);
             }
         });
 
-        ArrayList<Alarm> alarms = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        DataReader dr = new DataReader(this);
+        ArrayList<Alarm> alarms = dr.findAllFromDatabase();
+        if(alarms.size()>0){
+        }else{
             Alarm alarm = new Alarm();
-            alarm.date = new Date(2012, 12, 19);
-            alarm.name = "Whoot";
-            alarm.time = new Time(12, 12, 00);
+            alarm.name = "No Alarms yet!";
+            alarm.description  = "Please add an alarm";
             alarms.add(alarm);
         }
 
@@ -77,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addAlarm(View view) {
+        Intent intent = new Intent(MainActivity.this,AddAlarm.class);
+        startActivity(intent);
     }
 
     class CustomAdapter extends BaseAdapter {
@@ -126,8 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-
-            holder.time.setText(alarms.get(position).time.getHours() + ":" + alarms.get(position).time.getMinutes() + ":" + alarms.get(position).time.getSeconds());
+            holder.time.setText(alarms.get(position).time);
             holder.name.setText(alarms.get(position).name);
             holder.background.setBackgroundColor(getResources().getColor(R.color.highlight));
 
