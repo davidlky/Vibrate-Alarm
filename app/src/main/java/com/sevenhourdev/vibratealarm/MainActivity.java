@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sevenhourdev.vibratealarm.Models.Alarm;
 
@@ -30,6 +31,7 @@ import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -133,6 +135,25 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    // Ordinary Intent for launching a new activity
+                    Intent intent = new Intent(c, AlarmActivity.class);
+
+                    // Get the transition name from the string
+                    String transitionName = "alarm";
+
+                    // Define the view that the animation will start from
+                    View viewStart = findViewById(R.id.list_item);
+
+                    ActivityOptionsCompat options = ActivityOptionsCompat.
+                            makeSceneTransitionAnimation((Activity) c, viewStart, transitionName);
+                    //Start the Intent
+                    ActivityCompat.startActivity((Activity) c, intent, options.toBundle());
+                }
+            });
 
             holder.time.setText(alarms.get(position).time);
             holder.name.setText(alarms.get(position).name);
@@ -140,24 +161,5 @@ public class MainActivity extends AppCompatActivity {
 
             return convertView;
         }
-    }
-
-
-    public void animateIntent(View view) {
-
-        // Ordinary Intent for launching a new activity
-        Intent intent = new Intent(this, AlarmActivity.class);
-
-        // Get the transition name from the string
-        String transitionName = "alarm";
-
-        // Define the view that the animation will start from
-        View viewStart = findViewById(R.id.list_item);
-
-        ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this, viewStart, transitionName);
-        //Start the Intent
-        ActivityCompat.startActivity(this, intent, options.toBundle());
-
     }
 }
