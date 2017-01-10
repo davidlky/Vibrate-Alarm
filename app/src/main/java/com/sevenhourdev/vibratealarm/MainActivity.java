@@ -11,6 +11,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.ListViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -58,8 +61,9 @@ public class MainActivity extends AppCompatActivity {
             alarm.description  = "Please add an alarm";
             alarms.add(alarm);
         }
-
-        ((ListView) findViewById(R.id.listview)).setAdapter(new CustomAdapter(this, alarms));
+        RecyclerView recyclerView = ((RecyclerView) findViewById(R.id.listview));
+        recyclerView.setAdapter(new CustomAdapter(this, alarms));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
@@ -89,53 +93,48 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    class CustomAdapter extends BaseAdapter {
+    class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
 
-        private class ViewHolder {
+        public class ViewHolder extends RecyclerView.ViewHolder {
             LinearLayout background;
             TextView name;
             TextView time;
+            CardView wrapper;
+
+            public ViewHolder(View view){
+                super(view);
+                this.name = (TextView) view.findViewById(R.id.name);
+                this.background = (LinearLayout) view.findViewById(R.id.background);
+                this.time = (TextView) view.findViewById(R.id.times);
+                this.wrapper = (CardView) view.findViewById(R.id.list_item);
+
+            }
         }
 
         private ArrayList<Alarm> alarms;
         private Context c;
 
-        public CustomAdapter(Context c, ArrayList<Alarm> alarms) {
+        CustomAdapter(Context c, ArrayList<Alarm> alarms) {
             this.alarms = alarms;
             this.c = c;
         }
 
         @Override
-        public int getCount() {
-            return alarms.size();
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ViewHolder(LayoutInflater.
+                    from(parent.getContext()).
+                    inflate(R.layout.listitem_alarmlist,
+                            parent,
+                            false));
         }
 
         @Override
-        public Object getItem(int position) {
-            return alarms.get(position);
-        }
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            holder.time.setText(alarms.get(position).time);
+            holder.name.setText(alarms.get(position).name);
+            holder.background.setBackgroundColor(getResources().getColor(R.color.highlight));
 
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
-            LayoutInflater mInflater = (LayoutInflater)
-                    c.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.listitem_alarmlist, null);
-                holder = new ViewHolder();
-                holder.name = (TextView) convertView.findViewById(R.id.name);
-                holder.background = (LinearLayout) convertView.findViewById(R.id.background);
-                holder.time = (TextView) convertView.findViewById(R.id.times);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            convertView.setOnClickListener(new View.OnClickListener() {
+            holder.wrapper.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -154,12 +153,11 @@ public class MainActivity extends AppCompatActivity {
                     ActivityCompat.startActivity((Activity) c, intent, options.toBundle());
                 }
             });
+        }
 
-            holder.time.setText(alarms.get(position).time);
-            holder.name.setText(alarms.get(position).name);
-            holder.background.setBackgroundColor(getResources().getColor(R.color.highlight));
-
-            return convertView;
+        @Override
+        public int getItemCount() {
+            return alarms.size();
         }
     }
 }
