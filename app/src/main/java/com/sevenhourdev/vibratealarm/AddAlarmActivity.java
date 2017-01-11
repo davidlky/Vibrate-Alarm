@@ -1,17 +1,22 @@
 package com.sevenhourdev.vibratealarm;
 
 import android.content.Intent;
+import android.os.Build;
 import android.provider.AlarmClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import com.sevenhourdev.vibratealarm.Models.Alarm;
+import com.sevenhourdev.vibratealarm.helper.AlarmDataProvider;
 
-public class AddAlarm extends AppCompatActivity {
+import java.sql.Time;
+import java.util.Calendar;
+import java.util.Date;
+
+public class AddAlarmActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,18 +42,28 @@ public class AddAlarm extends AppCompatActivity {
         if (id == R.id.action_settings) {
             TimePicker tp = ((TimePicker) findViewById(R.id.timePicker));
             Alarm alarm = new Alarm();
-            alarm.time = tp.getCurrentHour()+":"+tp.getCurrentMinute();
+            Calendar cal = Calendar.getInstance();
+            int hour, minute;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                hour = tp.getHour();
+                minute = tp.getMinute();
+            }else{
+                hour = tp.getCurrentHour();
+                minute = tp.getCurrentMinute();
+            }
+            //noinspection WrongConstant
+            if (hour<cal.get(cal.HOUR_OF_DAY)||
+                    (cal.get(cal.HOUR_OF_DAY)==hour&&minute<cal.get(Calendar.MINUTE))){
+                cal.add(Calendar.DATE, 1);
+            }
+            cal.set(cal.HOUR_OF_DAY,hour);
+            cal.set(cal.MINUTE,minute);
+            cal.set(cal.SECOND,0);
+            cal.set(cal.MILLISECOND,0);
+            alarm.time = new Date(cal.getTimeInMillis());
             alarm.name = "Testing";
-            alarm.description="";
-            DataReader dr = new DataReader(this);
-            dr.addToDatabase(alarm);
-            Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
-            i.putExtra(AlarmClock.EXTRA_HOUR, tp.getCurrentHour());
-            i.putExtra(AlarmClock.EXTRA_MINUTES, tp.getCurrentMinute());
-            i.putExtra(AlarmClock.VALUE_RINGTONE_SILENT, true);
-            i.putExtra(AlarmClock.EXTRA_VIBRATE, true);
-            startActivity(i);
             finish();
+            AlarmDataProvider.getInstance(this, null).addAlarm(alarm);
         }
 
         return super.onOptionsItemSelected(item);

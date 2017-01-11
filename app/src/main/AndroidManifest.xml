@@ -3,12 +3,17 @@
     package="com.sevenhourdev.vibratealarm" >
 
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name=".AlarmApplication"
+        >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -24,9 +29,14 @@
             android:label="@string/title_activity_alarm"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".AddAlarm"
+            android:name=".AddAlarmActivity"
             android:label="@string/title_activity_add_alarm" >
         </activity>
+
+        <service android:name=".service.AlarmBackgroundService" />
+        <receiver
+            android:name=".receiver.AlarmReceiver"
+            android:process=":remote"/>
     </application>
 
 </manifest>
