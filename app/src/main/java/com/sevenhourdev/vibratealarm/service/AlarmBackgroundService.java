@@ -47,8 +47,8 @@ public class AlarmBackgroundService extends Service implements AlarmDataProvider
     }
 
     public void setContext(Context context){
-        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        mAlertProvider = AlarmDataProvider.getInstance(context,this);
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        mAlertProvider = AlarmDataProvider.getInstance(this,this);
     }
 
     @Override
@@ -75,12 +75,9 @@ public class AlarmBackgroundService extends Service implements AlarmDataProvider
         }
         Intent intent = new Intent(this, AlarmReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            currentAlarm.time.setTime(System.currentTimeMillis()+1000);
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Log.d("hello",""+currentAlarm.time.getTime());
-            alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(currentAlarm.time.getTime(),
-                    alarmIntent),alarmIntent);
-        }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, currentAlarm.time.getTime(),
                     alarmIntent);
         }else{

@@ -56,7 +56,8 @@ public class AlarmDataProvider {
     }
 
     public void addAlarm(final Alarm alarm){
-        alarm.id = realm.where(Alarm.class).max("id").intValue() + 1;
+        Number value = realm.where(Alarm.class).max("id");
+        alarm.id = (value==null?0:value.intValue()) + 1;
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm returnedRealm) {

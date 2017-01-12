@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sevenhourdev.vibratealarm" >
 
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -33,10 +32,12 @@
             android:label="@string/title_activity_add_alarm" >
         </activity>
 
-        <service android:name=".service.AlarmBackgroundService" />
+        <service android:name=".service.AlarmBackgroundService"
+            android:enabled="true"
+            android:exported="true" />
         <receiver
-            android:name=".receiver.AlarmReceiver"
-            android:process=":remote"/>
+            android:name=".receiver.AlarmReceiver" >
+        </receiver>
     </application>
 
 </manifest>
