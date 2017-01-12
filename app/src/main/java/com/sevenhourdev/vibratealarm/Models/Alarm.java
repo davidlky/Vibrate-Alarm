@@ -14,17 +14,16 @@ import io.realm.annotations.PrimaryKey;
 public class Alarm extends RealmObject {
     @PrimaryKey
     public int id;
-    @Ignore
-    public String name;
+    public Date time = new Date();
 //    public Highlight color = Highlight.Red;
 //    public Tag[] tags;
     public Long longitude;
     public Long latititude;
-    public Date time = new Date();
 //    public RepeatInterval repeat;
 //    public Day[] days;
     public boolean silent;
     public boolean vibrate;
+    public boolean active;
 
     @Ignore
     PendingIntent intent;
