@@ -10,6 +10,7 @@ An alarm clock that only vibrates and allows location based alarm in Material De
 - New alarm adding activity
 - New alarm display activity
 - Vibrate Only Alarm
+- Shake to wake
 
 ## Bonus
 - Tags
